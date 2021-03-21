@@ -32,6 +32,12 @@ namespace cloud_show_snatdemo_internal
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "cloud_show_snatdemo_internal", Version = "v1" });
             });
+
+            services.AddHttpClient<IInternalCallService, InternalCallService>(
+                client => {
+                    client.BaseAddress = new System.Uri(Configuration["InternalCallBaseUri"]);
+                }
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,8 +49,6 @@ namespace cloud_show_snatdemo_internal
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "cloud_show_snatdemo_internal v1"));
             }
-
-            app.UseHttpsRedirection();
 
             app.UseRouting();
 
