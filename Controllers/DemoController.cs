@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace cloud_show_snatdemo_internal.Controllers
@@ -10,17 +12,22 @@ namespace cloud_show_snatdemo_internal.Controllers
     {
         private readonly ILogger<DemoController> _logger;
         private readonly IInternalCallService _internalCallService;
+        private readonly IConfiguration _configuration;
 
         public DemoController(ILogger<DemoController> logger,
-        IInternalCallService callService)
+        IInternalCallService callService,
+        IConfiguration config)
         {
             _logger = logger;
             _internalCallService = callService;
+            _configuration = config;
         }
 
         [HttpGet("/internal")]
         public async Task<IActionResult> CallingInternalAsync(){
-            await _internalCallService.GetInternalResponse();
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new System.Uri(_configuration["InternalCallBaseUri"]);
+            await client.GetStringAsync("");
             return Ok();
         }
     }
